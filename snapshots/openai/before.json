@@ -1,0 +1,37 @@
+{
+  "provider": "openai",
+  "models": [
+    {"id": "gpt-4-turbo", "deprecated": false, "sunset_date": null},
+    {"id": "gpt-3.5-turbo", "deprecated": false, "sunset_date": null}
+  ],
+  "rate_limits": {
+    "gpt-4-turbo": {"rpm": 500, "tpm": 300000},
+    "gpt-3.5-turbo": {"rpm": 3500, "tpm": 90000}
+  },
+  "tools": [
+    {
+      "name": "get_weather",
+      "description": "Get the current weather for a location",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "location": {"type": "string", "description": "City and state, e.g. San Francisco, CA"},
+          "units": {"type": "string", "enum": ["celsius", "fahrenheit"]}
+        },
+        "required": ["location"]
+      }
+    },
+    {
+      "name": "create_ticket",
+      "description": "Create a customer support ticket",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {"type": "string"},
+          "priority": {"type": "string", "enum": ["low", "medium", "high"]}
+        },
+        "required": ["title"]
+      }
+    }
+  ]
+}

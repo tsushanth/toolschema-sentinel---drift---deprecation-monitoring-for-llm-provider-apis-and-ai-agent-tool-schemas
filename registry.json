@@ -1,0 +1,32 @@
+{
+  "weather-agent": {
+    "provider": "openai",
+    "model": "gpt-4-turbo",
+    "tools": ["get_weather"]
+  },
+  "legacy-support-bot": {
+    "provider": "openai",
+    "model": "gpt-3.5-turbo",
+    "tools": ["create_ticket"]
+  },
+  "claude-writer": {
+    "provider": "anthropic",
+    "model": "claude-3-opus-20240229",
+    "tools": ["draft_email"]
+  },
+  "legacy-claude-agent": {
+    "provider": "anthropic",
+    "model": "claude-3-haiku-20240307",
+    "tools": ["draft_email"]
+  },
+  "travel-planner": {
+    "provider": "google",
+    "model": "gemini-1.5-pro",
+    "tools": ["search_flights", "book_hotel"]
+  },
+  "old-google-agent": {
+    "provider": "google",
+    "model": "gemini-1.0-pro",
+    "tools": ["search_flights"]
+  }
+}
