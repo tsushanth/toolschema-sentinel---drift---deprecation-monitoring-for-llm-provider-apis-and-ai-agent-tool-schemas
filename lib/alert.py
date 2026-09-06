@@ -4,6 +4,7 @@ POST it to a webhook.
 
 import json
 import os
+import urllib.error
 import urllib.request
 
 from lib.diff import BREAKING, WARNING, INFO
@@ -64,7 +65,9 @@ def build_slack_payload(provider, findings, affected):
 def send_webhook(payload, webhook_url=None):
     """POST the Slack payload to a webhook URL if one is configured.
 
-    Returns True if a POST was attempted, False if no webhook was configured.
+    Returns True if the POST succeeded, False if no webhook was configured
+    or the POST failed (the failure is printed but never raised, since a
+    delivery problem shouldn't hide an otherwise-successful diff report).
     """
     url = webhook_url or os.environ.get("SLACK_WEBHOOK_URL")
     if not url:
@@ -74,6 +77,10 @@ def send_webhook(payload, webhook_url=None):
     request = urllib.request.Request(
         url, data=data, headers={"Content-Type": "application/json"}, method="POST"
     )
-    with urllib.request.urlopen(request, timeout=10) as response:
-        response.read()
+    try:
+        with urllib.request.urlopen(request, timeout=10) as response:
+            response.read()
+    except (urllib.error.URLError, OSError) as exc:
+        print(f"\nFailed to POST alert to webhook {url}: {exc}")
+        return False
     return True

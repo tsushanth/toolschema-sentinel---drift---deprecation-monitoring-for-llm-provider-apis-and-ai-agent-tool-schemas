@@ -9,6 +9,7 @@ plus a Slack-formatted alert.
 
 import argparse
 import json
+import os
 import sys
 
 from lib.diff import diff_tools, diff_rate_limits, BREAKING
@@ -18,8 +19,13 @@ from lib.alert import build_slack_payload, send_webhook
 
 
 def load_json(path):
-    with open(path) as f:
-        return json.load(f)
+    try:
+        with open(path) as f:
+            return json.load(f)
+    except FileNotFoundError:
+        sys.exit(f"error: file not found: {path}")
+    except json.JSONDecodeError as exc:
+        sys.exit(f"error: invalid JSON in {path}: {exc}")
 
 
 def compute_findings(provider, before, after):
@@ -78,7 +84,11 @@ def cmd_diff(args):
     if sent:
         print("\nPosted alert to the configured Slack webhook.")
     elif findings:
-        print("\n(no SLACK_WEBHOOK_URL set — alert printed above only)")
+        webhook_configured = args.webhook or os.environ.get("SLACK_WEBHOOK_URL")
+        if webhook_configured:
+            print("\n(webhook delivery failed — alert printed above only)")
+        else:
+            print("\n(no SLACK_WEBHOOK_URL set — alert printed above only)")
 
     return 0
 
